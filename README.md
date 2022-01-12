@@ -1,5 +1,12 @@
 # layout-with-ocr
-layout-ocr.py takes a directory of images, model index, and language index as input to produce OCR output for each image. 
-- directory of images : name of folder of page-wise images 
-- model index : which deep learning model for layout do you want implemented? [1:fasterrcnn_publaynet, 2:fasterrcnn_coco, 3:fasterrcnn_scratch, 4:maskrcnn_publaynet, 5:maskrcnn_coco, 6:maskrcnn_scratch]
-- language index : which language model for ocr do you want implemented? [1:san, 2:san_iitb]
+To run lp_ocr.py, wrapper for Layout Parser OCR **for the first time**: 
+- Create a venv and activate:  
+1. virtualenv lp_ocr
+2. source lp_ocr/bin/activate
+- Install all packages in the environment: 
+1. pip3 install -r requirements.txt
+2. apt install tesseract-ocr
+3. apt install libtesseract-dev
+4. apt-get install poppler-utils
+- Run lp_ocr script: 
+5. python3 lp_ocr.py 

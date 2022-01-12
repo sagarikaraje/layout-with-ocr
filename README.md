@@ -5,7 +5,7 @@ Wrapper for layout parser OCR.
 1. virtualenv lp_ocr
 2. source lp_ocr/bin/activate
 - Install all packages in the environment: 
-1. pip install -r requirements.txt
+1. pip3 install -r requirements.txt
 2. apt install < requirements.txt
 - Run lp_ocr script: 
 1. python3 lp_ocr.py 

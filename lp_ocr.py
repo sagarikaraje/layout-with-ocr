@@ -39,10 +39,10 @@ except Exception as err:
   print("Error: {0}".format(err))
   sys.exit(1)
 
-try:
+  #if user inputs an existing directory, no new directory will be formed. Instead only the output_dir variable will be changed
+if not os.path.exists(output_dir):
   os.mkdir(output_dir)
-except:
-  print("Output directory already exists, please enter the name of a new directory.") #TO DO: User should be able to enter existing dirs as well. 
+
 ocr_agent = lp.TesseractAgent(languages=input_lang) #TO DO - Explore the layout part, how it can be added
 
 if os.path.isdir(img_dir):

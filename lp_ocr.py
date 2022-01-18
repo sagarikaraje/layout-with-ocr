@@ -9,11 +9,8 @@ try:
  from PIL import Image
 except ImportError:
  import Image
-import cv2
 import pytesseract
-import os
 from pdf2image import convert_from_path
-import cv2
 import sys
 from pdfreader import SimplePDFViewer
 
@@ -26,6 +23,9 @@ for k,f in enumerate(fnames):
 dir_no = int(input("Please enter the image directory number:\n"))
 img_dir = fnames_[str(dir_no)]
 print(dir_no, "-", img_dir)
+
+if(input('Do you want to specify Tessdata directory? \nDefault: $(LOCAL)/share/tessdata \nEnter y for yes, n for no: ') == 'y'):
+  os.environ["TESSDATA_PREFIX"] =  input("Enter path to tessdata directory: \n")
 
 #initialise language model 
 input_lang = input("Please enter the language of your images. If more than one languages are to be used, please enter like so '"'san+eng'"'")
@@ -41,8 +41,8 @@ except Exception as err:
 
   #if user inputs an existing directory, no new directory will be formed. Instead only the output_dir variable will be changed
 if not os.path.exists(output_dir):
-  os.mkdir(output_dir)
-
+  os.mkdir(output_dir) 
+  
 ocr_agent = lp.TesseractAgent(languages=input_lang) #TO DO - Explore the layout part, how it can be added
 
 if os.path.isdir(img_dir):

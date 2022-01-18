@@ -67,7 +67,7 @@ if os.path.isdir(img_dir):
         print(img_)
         image = cv2.imread(newdir + "/page_images/" + img_)
         res = ocr_agent.detect(image)
-        with open(newdir + "/output/" + img_[:-4] + '.txt', 'w') as f:
+        with open(newdir + "/output/" + img_[:-4] + 'txt', 'w') as f:
           f.write(res)
     elif img_file.endswith('.jpg') or img_file.endswith('.png') or img_file.endswith('.jpeg'):
       print("OCR-ing images...\n")

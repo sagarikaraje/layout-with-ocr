@@ -73,7 +73,11 @@ if os.path.isdir(img_dir):
       print("OCR-ing images...\n")
       image = cv2.imread(img_dir + "/" + img_file)
       res = ocr_agent.detect(image)
-      with open(output_dir + '/' + img_file[:-4] + '.txt', 'w') as f:
+      if img_file.endswith('.jpeg'):
+        x = img_file[:-5]
+      else:
+        x = img_file[:-4]
+      with open(output_dir + '/' + x + '.txt', 'w') as f:
         f.write(res)
 
   print("OCR is complete. Please find output in provided output directory.")

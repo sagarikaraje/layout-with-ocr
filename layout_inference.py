@@ -108,6 +108,11 @@ outputs = predictor(im)
 
 img = Image.open(input_image_path)
 c=0
+instances = outputs["instances"].to("cpu")
+boxes = instances.pred_boxes.tensor.tolist()
+scores = instances.scores.tolist()
+labels = instances.pred_classes.tolist()
+
 for score, box, label in zip(scores, boxes, labels):
     x_1, y_1, x_2, y_2 = box
     label_name = label_mapping[label]

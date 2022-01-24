@@ -12,5 +12,5 @@ LABEL_CATALOG:
     3: Table
     4: Text
 MODEL_CATALOG:
-  PubLayNet_faster_rcnn_R_50_FPN_3x: https://www.dropbox.com/s/qb1d4edsh9oa50c/model_faster_publayout_comb.pth?dl=1
+  PubLayNet_faster_rcnn_R_50_FPN_3x.yml: https://www.dropbox.com/s/qb1d4edsh9oa50c/model_faster_publayout_comb.pth?dl=1
   PubLayNet_mask_rcnn_X_101_32x8d_FPN_3x.yaml: ''

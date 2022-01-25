@@ -17,7 +17,7 @@ import subprocess
 
 #Execute layout inference 
 
-execfile('layout_inference.py')
+exec(open('layout_inference.py').read())
 
 #initialise input image
 '''

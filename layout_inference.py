@@ -68,7 +68,7 @@ if input_choice == 'no':
     isRandom = False
 if isRandom == False:
     image_name = input("Enter the image name : ")
-    input_image_path = image_name
+    input_image_path = input_image_path + image_name
 else:
     random_image_name = random.choice(os.listdir(input_image_path))
     input_image_path = input_image_path + random_image_name

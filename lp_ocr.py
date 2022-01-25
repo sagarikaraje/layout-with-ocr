@@ -13,8 +13,14 @@ import pytesseract
 from pdf2image import convert_from_path
 import sys
 from pdfreader import SimplePDFViewer
+import subprocess 
+
+#Execute layout inference 
+
+execfile('layout_inference.py')
 
 #initialise input image
+'''
 fnames = [fn for fn in os.listdir('.')]
 fnames_= {}
 for k,f in enumerate(fnames):
@@ -23,6 +29,7 @@ for k,f in enumerate(fnames):
 dir_no = int(input("Please enter the image directory number:\n"))
 img_dir = fnames_[str(dir_no)]
 print(dir_no, "-", img_dir)
+'''
 
 if(input('Do you want to specify Tessdata directory? \nDefault: $(LOCAL)/share/tessdata \nEnter y for yes, n for no: ') == 'y'):
   os.environ["TESSDATA_PREFIX"] =  input("Enter path to tessdata directory: \n") 
@@ -43,43 +50,45 @@ except Exception as err:
 if not os.path.exists(output_dir):
   os.mkdir(output_dir) 
   
-ocr_agent = lp.TesseractAgent(languages=input_lang) #TO DO - Explore the layout part, how it can be added
+ocr_agent = lp.TesseractAgent(languages=input_lang) 
 
-if os.path.isdir(img_dir):
-  print(img_dir)
-  for img_file in os.listdir(img_dir):
-    if img_file.endswith('.pdf'):
-      print("OCR-ing pdfs...\n")
-      newdir = output_dir + "/" + img_file.replace(".pdf", "")
-      os.mkdir(newdir)
-      os.mkdir(newdir + "/page_images")
-      os.mkdir(newdir + "/output")
-      img_path= img_dir + "/" + img_file
-      print("Converting to images...\n")
-      convert_from_path(img_path,
-          output_folder= newdir + "/page_images",
-          paths_only=True,
-          fmt='jpg',
-          output_file="O",
-          use_pdftocairo=True,
-        )
-      for img_ in os.listdir(newdir + "/page_images"):
-        print(img_)
-        image = cv2.imread(newdir + "/page_images/" + img_)
-        res = ocr_agent.detect(image)
-        with open(newdir + "/output/" + img_[:-4] + 'txt', 'w') as f:
-          f.write(res)
-    elif img_file.endswith('.jpg') or img_file.endswith('.png') or img_file.endswith('.jpeg'):
-      print("OCR-ing images...\n")
-      image = cv2.imread(img_dir + "/" + img_file)
-      res = ocr_agent.detect(image)
-      if img_file.endswith('.jpeg'):
-        x = img_file[:-5]
-      else:
-        x = img_file[:-4]
-      with open(output_dir + '/' + x + '.txt', 'w') as f:
-        f.write(res)
+for layout_class in os.listdir(output_folderName):
+ img_dir = output_folderName + '/' +layout_class
+ if os.path.isdir(img_dir):
+   print(img_dir)
+   for img_file in os.listdir(img_dir):
+     if img_file.endswith('.pdf'):
+       print("OCR-ing pdfs...\n")
+       newdir = output_dir + "/" + img_file.replace(".pdf", "")
+       os.mkdir(newdir)
+       os.mkdir(newdir + "/page_images")
+       os.mkdir(newdir + "/output")
+       img_path= img_dir + "/" + img_file
+       print("Converting to images...\n")
+       convert_from_path(img_path,
+           output_folder= newdir + "/page_images",
+           paths_only=True,
+           fmt='jpg',
+           output_file="O",
+           use_pdftocairo=True,
+         )
+       for img_ in os.listdir(newdir + "/page_images"):
+         print(img_)
+         image = cv2.imread(newdir + "/page_images/" + img_)
+         res = ocr_agent.detect(image)
+         with open(newdir + "/output/" + img_[:-4] + 'txt', 'w') as f:
+           f.write(res)
+     elif img_file.endswith('.jpg') or img_file.endswith('.png') or img_file.endswith('.jpeg'):
+       print("OCR-ing images...\n")
+       image = cv2.imread(img_dir + "/" + img_file)
+       res = ocr_agent.detect(image)
+       if img_file.endswith('.jpeg'):
+         x = img_file[:-5]
+       else:
+         x = img_file[:-4]
+       with open(output_dir + '/' + x + '.txt', 'w') as f:
+         f.write(res)
 
-  print("OCR is complete. Please find output in provided output directory.")
-else:
-  print("You have not entered a valid image directory.")
+   print("OCR is complete. Please find output in provided output directory.")
+ else:
+   continue

@@ -32,7 +32,7 @@ print(dir_no, "-", img_dir)
 '''
 
 if(input('Do you want to specify Tessdata directory? \nDefault: $(LOCAL)/share/tessdata \nEnter y for yes, n for no: ') == 'y'):
-  os.environ["TESSDATA_PREFIX"] =  input("Enter path to tessdata directory: \n") 
+  os.environ["TESSDATA_PREFIX"] = input("Enter path to tessdata directory: \n")
 
 #initialise language model 
 input_lang = input("Please enter the language of your images. If more than one languages are to be used, please enter like so '"'san+eng'"'")

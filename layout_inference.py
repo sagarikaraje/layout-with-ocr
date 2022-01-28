@@ -19,7 +19,6 @@ from detectron2.engine import DefaultTrainer, default_argument_parser, default_s
 # import some common libraries
 import numpy as np
 import os, json, cv2, random
-from google.colab.patches import cv2_imshow
 
 # import some common detectron2 utilities
 from detectron2 import model_zoo
@@ -33,11 +32,16 @@ from detectron2.structures import BoxMode
 import yaml
 from detectron2.data.datasets import register_coco_instances
 
-config_filePath = "configs/layout_parser_configs"
+custom_config = "custom_labels_weights.yml"
+with open(custom_config, 'r') as stream:
+    custom_yml_loaded = yaml.safe_load(stream)
 
+config_list = list(custom_yml_loaded['WEIGHT_CATALOG'].keys()) + list(custom_yml_loaded['MODEL_CATALOG'].keys())
+
+config_filePath = "configs/layout_parser_configs"
 index = 1
 config_filesDict = {}
-for cfile in os.listdir(config_filePath):
+for cfile in config_list:
     config_filesDict[index] = cfile
     print(index,":",cfile)
     index+=1
@@ -46,17 +50,22 @@ print(" ")
 chosenFile = input("choose the model for the inference : ")
 print("Selected Model = ",config_filesDict[int(chosenFile)])
 
-config_file = config_filePath + '/' + config_filesDict[int(chosenFile)]
 print(" ")
 config_name = config_filesDict[int(chosenFile)]
-
-custom_config = "custom_labels_weights.yml"
-with open(custom_config, 'r') as stream:
-    custom_yml_loaded = yaml.safe_load(stream)
-
+print(config_name.split('_')[0] == 'Sanskrit')
 #CAPTURE MODEL WEIGHTS
-model_weights = custom_yml_loaded['MODEL_CATALOG'][config_name]
-label_mapping = custom_yml_loaded['LABEL_CATALOG']["Sanskrit_Finetuned"]
+if config_name.split('_')[0] == 'Sanskrit':
+    core_config = config_name.replace('Sanskrit_', '')
+    config_file = config_filePath + '/' + custom_yml_loaded['MODEL_CATALOG'][core_config]
+    model_weights = custom_yml_loaded['WEIGHT_CATALOG'][config_name]
+    label_mapping = custom_yml_loaded['LABEL_CATALOG']["Sanskrit_Finetuned"]
+else:
+    config_file = config_filePath + '/' + custom_yml_loaded['MODEL_CATALOG'][config_name]
+    yaml_file = open(config_file)
+    parsed_yaml_file = yaml.load(yaml_file, Loader = yaml.FullLoader)
+    model_weights = parsed_yaml_file['MODEL']['WEIGHTS']
+    dataset = config_name.split('_')[0]
+    label_mapping = custom_yml_loaded['LABEL_CATALOG'][dataset]
 
 print(model_weights)
 
@@ -91,7 +100,7 @@ if not os.path.exists(output_folderName):
 cfg = get_cfg()
 cfg.merge_from_file(config_file)
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = confidence_threshold # set threshold for this model
-cfg.MODEL.ROI_HEADS.NUM_CLASSES = 5
+cfg.MODEL.ROI_HEADS.NUM_CLASSES = len(list(label_mapping.keys()))
 
 print("ROI Heads is taken as",cfg.MODEL.ROI_HEADS.NUM_CLASSES)
 
@@ -101,7 +110,6 @@ cfg.MODEL.WEIGHTS =  model_weights
 
 predictor = DefaultPredictor(cfg)
 im = cv2.imread(input_image_path)
-cv2_imshow(im)
 outputs = predictor(im)
 
 # SAVE PREDICTIONS
@@ -119,6 +127,6 @@ for score, box, label in zip(scores, boxes, labels):
     if not os.path.isdir(f"{output_folderName}/{label_name}"):
         os.mkdir(f"{output_folderName}/{label_name}")
     img_cropped = img.crop((box))
-    img_name = label_name + "_" + str(c) + ".jpg"
+    img_name = label_name + "_" + str(c) + ".png"
     im1 = img_cropped.save(f"{output_folderName}/{label_name}/{img_name}")
     c+=1

@@ -13,11 +13,13 @@ import pytesseract
 from pdf2image import convert_from_path
 import sys
 from pdfreader import SimplePDFViewer
-import subprocess 
+import subprocess  
 
-#Execute layout inference 
+# Execute layout inference
 
-exec(open('layout_inference.py').read())
+from layout_inference import infer_layout 
+# taking the folder that has layout detections
+output_folderName = infer_layout()
 
 #initialise input image
 '''
@@ -53,9 +55,12 @@ if not os.path.exists(output_dir):
 ocr_agent = lp.TesseractAgent(languages=input_lang) 
 
 for layout_class in os.listdir(output_folderName):
- img_dir = output_folderName + '/' +layout_class
+ # only take images from class-wise folders with cropped images and not the image with visualisation of predictions 
+ if not layout_class.endswith('.jpg') or layout_class.endswith('.png') or layout_class.endswith('.jpeg'):
+   img_dir = output_folderName + '/' +layout_class
+ else:
+   continue 
  if os.path.isdir(img_dir):
-   print(img_dir)
    for img_file in os.listdir(img_dir):
      if img_file.endswith('.pdf'):
        print("OCR-ing pdfs...\n")
@@ -89,6 +94,6 @@ for layout_class in os.listdir(output_folderName):
        with open(output_dir + '/' + x + '.txt', 'w') as f:
          f.write(res)
 
-   print("OCR is complete. Please find output in provided output directory.")
+   print("OCR is complete. Please find the output in the provided output directory.")
  else:
    continue

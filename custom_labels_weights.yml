@@ -13,7 +13,7 @@ LABEL_CATALOG:
     4: Text
 WEIGHT_CATALOG:
   Sanskrit_PubLayNet_faster_rcnn: https://www.dropbox.com/s/qb1d4edsh9oa50c/model_faster_publayout_comb.pth?dl=1
-  Sanskrit_PubLayNet_mask_rcnn_X101:
+  Sanskrit_PubLayNet_mask_rcnn_X101: https://www.dropbox.com/s/7onhy14lfjmd82u/model_mask_publayout_comb.pth?dl=1
   Sanskrit_COCO_faster_rcnn:
   Sanskrit_COCO_mask_rcnn:
 MODEL_CATALOG:

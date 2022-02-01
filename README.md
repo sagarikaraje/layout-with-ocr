@@ -8,5 +8,10 @@ To run lp_ocr.py, wrapper for Layout Parser OCR **for the first time**:
 2. apt install tesseract-ocr
 3. apt install libtesseract-dev
 4. apt-get install poppler-utils
-- Run lp_ocr script: 
-5. python3 lp_ocr.py 
+- For document layout detection + OCR of an image:   
+    - Run lp_ocr.py and select 'yes' when asked if layout detection should be applied
+- For document layout analysis of an image: 
+    - Run layout_inference.py. This will return an infered image with masks and a json file with layout data. 
+- For OCR of a directory of images: 
+    - Run lp_ocr.py and select 'no' when asked if layout detection should be applied, and supply your input image directory. 
+

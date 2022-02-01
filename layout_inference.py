@@ -94,10 +94,6 @@ def infer_layout():
   print(" ")
 
   # Getting the output folder
-  output_folderName = input("Please enter the output folder name : ")
-
-  if not os.path.exists(output_folderName):
-      os.makedirs(output_folderName)
 
   # Set custom configurations
 
@@ -134,25 +130,38 @@ def infer_layout():
   ans = out.get_image()[:, :, ::-1]
   im = Image.fromarray(ans)
   img_name = 'image_with_predictions.jpg'
-  im.save(f"{output_folderName}/{img_name}")
+  im.save(f"{img_name}")
 
   # Save individual predictions into respective class-wise folders 
   img = Image.open(input_image_path)
   c=0
+  k=0
   instances = outputs["instances"].to("cpu")
   boxes = instances.pred_boxes.tensor.tolist()
   scores = instances.scores.tolist()
   labels = instances.pred_classes.tolist()
-
+  labels.sort()
+  layout_info = {}
+  l_prev = labels[0]
 
   for score, box, label in zip(scores, boxes, labels):
-      x_1, y_1, x_2, y_2 = box
-      label_name = label_mapping[label]
-      if not os.path.isdir(f"{output_folderName}/{label_name}"):
-          os.mkdir(f"{output_folderName}/{label_name}")
-      img_cropped = img.crop((box))
-      img_name = label_name + "_" + str(c) + ".png"
-      im1 = img_cropped.save(f"{output_folderName}/{label_name}/{img_name}")
+    x_1, y_1, x_2, y_2 = box
+    label_name = label_mapping[label]
+    if k!=0 and label == l_prev:
       c+=1
+      l_new = label_name+str(c)
+      layout_info[l_new] = box
+    else:
+      c=0 
+      l_new = label_name+str(c)
+      layout_info[l_new] = box
+    k+=1
+    l_prev = label
+  
+  with open("layout_data.json", 'w', encoding='utf-8') as f:
+    json.dump(layout_info, f, ensure_ascii=False, indent=4)
 
-  return output_folderName
+    return img, layout_info
+
+if __name__ == "__main__":
+    infer_layout()

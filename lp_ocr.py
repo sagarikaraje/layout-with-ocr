@@ -81,12 +81,13 @@ if infer_flag == "no":
 
 elif infer_flag == "yes":
   img, layout_info = infer_layout()
-  for label, box in layout_info.items():
-    img_cropped = img.crop(box)
-    res = ocr_agent.detect(img_cropped)
-    with open(output_dir + '/' + label + '.txt', 'w') as f:
+  with open(output_dir + '/output-ocr.txt', 'w') as f:
+    for label, box in layout_info.items():
+      img_cropped = img.crop(box)
+      res = ocr_agent.detect(img_cropped)
       f.write(res)
-  
+    f.close()
+
   print("OCR is complete. Please find the output in the provided output directory.")
 
 else:

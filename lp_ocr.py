@@ -81,8 +81,10 @@ if infer_flag == "no":
 
 elif infer_flag == "yes":
   img, layout_info = infer_layout()
+  #sorting layout_info by y_1 coordinate
+  layout_info_sort = {k: v for k, v in sorted(layout_info.items(), key=lambda item: item[1][1], reverse=True)}
   with open(output_dir + '/output-ocr.txt', 'w') as f:
-    for label, box in layout_info.items():
+    for label, box in layout_info_sort.items():
       img_cropped = img.crop(box)
       res = ocr_agent.detect(img_cropped)
       f.write(res)

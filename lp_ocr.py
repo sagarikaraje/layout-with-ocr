@@ -22,8 +22,9 @@ from layout_inference import infer_layout
 #does the user want to use layout inference ? 
 infer_flag = input("Do you wish to use Layout Inference? (yes or no)")
 
-if(input('Do you wish to specify Tessdata directory? \nDefault: $(LOCAL)/share/tessdata \nEnter y for yes, n for no: ') == 'y'):
-  os.environ["TESSDATA_PREFIX"] = input("Enter path to tessdata directory: \n")
+if(input('Do you wish to specify Tessdata directory? \nDefault: $(LOCAL)/share/tessdata \n(yes or no)') == 'yes'):
+  tessdata_path = input("Enter path to tessdata directory: \n")
+  os.environ["TESSDATA_PREFIX"] = tessdata_path
 
 #initialise language model 
 input_lang = input("Please enter the language of your images. If more than one languages are to be used, please enter like so '"'san+eng'"'")
@@ -43,7 +44,7 @@ if not os.path.exists(output_dir):
 ocr_agent = lp.TesseractAgent(languages=input_lang) 
 
 if infer_flag == "no":
-  img_dir = input("Enter the name of our image folder for OCR")
+  img_dir = input("Enter the name of your image folder for OCR: ")
   if os.path.isdir(img_dir):
     for img_file in os.listdir(img_dir):
       if img_file.endswith('.pdf'):
@@ -67,6 +68,12 @@ if infer_flag == "no":
           res = ocr_agent.detect(image)
           with open(newdir + "/output/" + img_[:-4] + 'txt', 'w') as f:
             f.write(res)
+          hocr = pytesseract.image_to_pdf_or_hocr(image,
+                                            lang=input_lang,
+                                            extension='hocr',
+                                            config=tessdata_path)
+          with open(output_dir + '/' + x + 'hocr', 'w') as f:
+            f.write(hocr)
       elif img_file.endswith('.jpg') or img_file.endswith('.png') or img_file.endswith('.jpeg'):
         print("OCR-ing images...\n")
         image = cv2.imread(img_dir + "/" + img_file)
@@ -77,6 +84,12 @@ if infer_flag == "no":
           x = img_file[:-4]
         with open(output_dir + '/' + x + '.txt', 'w') as f:
           f.write(res)
+        hocr = pytesseract.image_to_pdf_or_hocr(image,
+                                            lang=input_lang,
+                                            extension='hocr',
+                                            config=tessdata_path)
+        with open(output_dir + '/' + x + 'hocr', 'w') as f:
+          f.write(hocr)
   print("OCR is complete. Please find the output in the provided output directory.")
 
 elif infer_flag == "yes":

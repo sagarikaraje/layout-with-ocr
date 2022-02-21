@@ -23,11 +23,27 @@ from layout_inference import infer_layout
 #does the user want to use layout inference ? 
 infer_flag = input("Do you wish to use Layout Inference? (yes or no)")
 
-if(input('Do you wish to specify Tessdata directory? \nDefault: $(LOCAL)/share/tessdata \nEnter y for yes, n for no: ') == 'y'):
-  os.environ["TESSDATA_PREFIX"] = input("Enter path to tessdata directory: \n")
+#initialise language model
+tessdata_dir_config = r'--tessdata-dir "/content/layout-with-ocr/configs/tessdata"' #must change while running locally
+languages=pytesseract.get_languages(config=tessdata_dir_config)
+lcount=0 
+tesslanglist={}
+# print(languages)
+for l in languages:
+  # if not (l== 'osd'):
+    tesslanglist[lcount]=l
+    lcount+=1
+    print(str(lcount)+'. '+l)
 
-#initialise language model 
-input_lang = input("Please enter the language of your images. If more than one languages are to be used, please enter like so '"'san+eng'"'")
+linput=input("Choose the language model for OCR from the above list: ")
+
+if not (int(linput)-1) in tesslanglist:
+  print("Not a correct option! Exiting program")
+  sys.exit(1)
+
+print("Selected language model: "+tesslanglist[int(linput)-1])
+
+input_lang=tesslanglist[int(linput)-1]
 
 #initialise output directory 
 try:
@@ -116,7 +132,7 @@ def convert_to_ls(image, tesseract_output, per_level='block_num'):
   }
 
 if infer_flag == "no":
-  img_dir = input("Enter the name of our image folder for OCR")
+  img_dir = input("Enter the name of our image folder for OCR: \n")
   if os.path.isdir(img_dir):
     for img_file in os.listdir(img_dir):
       if img_file.endswith('.pdf'):
